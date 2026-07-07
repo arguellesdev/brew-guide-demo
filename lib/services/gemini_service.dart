@@ -15,10 +15,11 @@ typedef CoffeeBean = ({
 
 Future<CoffeeBean> recommendCoffee(String preference, String apiKey) async {
   final url = Uri.parse(
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$apiKey',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent',
   );
 
-  const systemPrompt = 'You are a specialty coffee expert. Given a flavor preference, return ONLY a JSON object with:\n'
+  const systemPrompt =
+      'You are a specialty coffee expert. Given a flavor preference, return ONLY a JSON object with:\n'
       'name, origin, roast (light|medium|dark), method (pour_over|espresso|cold_brew|french_press),\n'
       'description (max 40 words), brewTime, waterTemp, grind, flavorNotes (array of 4-5 strings).\n'
       'No explanation. No markdown. No backticks.';
@@ -27,6 +28,7 @@ Future<CoffeeBean> recommendCoffee(String preference, String apiKey) async {
     url,
     headers: {
       'Content-Type': 'application/json',
+      'X-goog-api-key': apiKey,
     },
     body: jsonEncode({
       'contents': [
@@ -43,6 +45,7 @@ Future<CoffeeBean> recommendCoffee(String preference, String apiKey) async {
       },
       'generationConfig': {
         'responseMimeType': 'application/json',
+        'maxOutputTokens': 1024,
       },
     }),
   );
@@ -65,8 +68,7 @@ Future<CoffeeBean> recommendCoffee(String preference, String apiKey) async {
 
   String text = parts[0]['text'] as String;
   text = text.trim();
-  
-  // Strip markdown backticks if present
+
   if (text.startsWith('```json')) {
     text = text.substring(7);
   } else if (text.startsWith('```')) {
