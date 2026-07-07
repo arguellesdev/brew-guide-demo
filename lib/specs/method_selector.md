@@ -31,9 +31,9 @@ When the Gemini input is submitted, POST to /api/gemini with the text.
  
 ## Colors (from lib/constants/theme.dart)
 Background cards: colorBackground #F5EFE4
-Active border: scaHerb #30622D
-Button text: scaCitrus #FEC844
- 
+Active border: scaWine #692729
+Button text: scaCitrus #f6b36fff
+
 ## Constraints
 - Use semantic HTML. No div where a section or article would be correct.
 - CSS via @css static getter on the component class.

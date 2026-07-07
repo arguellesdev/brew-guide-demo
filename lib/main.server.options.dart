@@ -5,8 +5,9 @@
 // Generated with jaspr_builder
 
 import 'package:jaspr/server.dart';
-import 'package:flutter_conf_jaspr_demo/components/counter.dart' as _counter;
 import 'package:flutter_conf_jaspr_demo/components/header.dart' as _header;
+import 'package:flutter_conf_jaspr_demo/components/method_selector.dart'
+    as _method_selector;
 import 'package:flutter_conf_jaspr_demo/constants/theme.dart' as _theme;
 import 'package:flutter_conf_jaspr_demo/pages/about.dart' as _about;
 import 'package:flutter_conf_jaspr_demo/pages/home.dart' as _home;
@@ -37,8 +38,8 @@ ServerOptions get defaultServerOptions => ServerOptions(
   styles: () => [
     ..._theme.styles,
     ..._app.App.styles,
-    ..._counter.CounterState.styles,
     ..._header.Header.styles,
+    ..._method_selector.MethodSelector.styles,
     ..._about.About.styles,
   ],
 );

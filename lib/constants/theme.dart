@@ -1,14 +1,14 @@
 import 'package:jaspr/dom.dart';
 
 // SCA Specialty Coffee Association flavor palette.
-const scaCitrus     = Color('#FEC844');
+const scaCitrus     = Color('#F6B36F'); 
 const scaStrawberry = Color('#FF5658');
 const scaChocolate  = Color('#74301E');
 const scaFloral     = Color('#C28DBE');
 const scaBlueberry  = Color('#2659B1');
 const scaFerment    = Color('#CDAF29');
 const scaWine       = Color('#692729');
-const scaHerb       = Color('#30622D');
+const scaHerb       = Color('#326359');
 const scaBay        = Color('#143D37');
 
 // Neutral surface palette.
