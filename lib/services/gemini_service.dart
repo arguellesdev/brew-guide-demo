@@ -19,10 +19,13 @@ Future<CoffeeBean> recommendCoffee(String preference, String apiKey) async {
   );
 
   const systemPrompt =
-      'You are a specialty coffee expert. Given a flavor preference, return ONLY a JSON object with:\n'
-      'name, origin, roast (light|medium|dark), method (pour_over|espresso|cold_brew|french_press),\n'
-      'description (max 40 words), brewTime, waterTemp, grind, flavorNotes (array of 4-5 strings).\n'
-      'No explanation. No markdown. No backticks.';
+    'You are a specialty coffee expert. Return ONLY a valid JSON object with these exact fields: '
+    'name (string), origin (string), roast (light|medium|dark), '
+    'method (pour_over|espresso|cold_brew|french_press), '
+    'description (string, MAX 20 words), '
+    'brewTime (string), waterTemp (string), grind (string), '
+    'flavorNotes (array of exactly 4 strings). '
+    'No explanation. No markdown. No backticks. JSON only.';
 
   final response = await http.post(
     url,
