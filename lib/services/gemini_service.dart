@@ -18,14 +18,17 @@ Future<CoffeeBean> recommendCoffee(String preference, String apiKey) async {
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent',
   );
 
-  const systemPrompt =
-    'You are a specialty coffee expert. Return ONLY a valid JSON object with these exact fields: '
-    'name (string), origin (string), roast (light|medium|dark), '
+const systemPrompt =
+    'You are a specialty coffee expert. Return ONLY a valid JSON object. '
+    'Use these exact fields and keep values SHORT: '
+    'name (3 words max), origin (1 word), roast (light|medium|dark), '
     'method (pour_over|espresso|cold_brew|french_press), '
-    'description (string, MAX 20 words), '
-    'brewTime (string), waterTemp (string), grind (string), '
-    'flavorNotes (array of exactly 4 strings). '
-    'No explanation. No markdown. No backticks. JSON only.';
+    'description (10 words max), '
+    'brewTime (format: "X min" or "X-Y sec"), '
+    'waterTemp (format: "XXX°C"), '
+    'grind (1 word: Coarse|Medium|Fine), '
+    'flavorNotes (exactly 4 strings, 1-2 words each). '
+    'JSON only. No explanation. No markdown.';
 
   final response = await http.post(
     url,
@@ -48,7 +51,7 @@ Future<CoffeeBean> recommendCoffee(String preference, String apiKey) async {
       },
       'generationConfig': {
         'responseMimeType': 'application/json',
-        'maxOutputTokens': 1024,
+        'maxOutputTokens': 2048,
       },
     }),
   );

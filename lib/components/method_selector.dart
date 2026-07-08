@@ -14,7 +14,7 @@ class MethodSelector extends StatelessComponent {
       div(classes: 'method-grid', [
   form(method: FormMethod.post, action: '/api/gemini', [
     input(type: InputType.hidden, name: 'preference',
-      attributes: {'value': 'Recommend a specialty coffee for pour over method, light roast, clean and floral notes'}),
+     attributes: {'value': 'Pour over coffee recommendation, light roast, floral and clean'}),
     button(type: ButtonType.submit, classes: 'method-card', [
       h3([Component.text('Pour over')]),
       p([Component.text('Clean, floral, bright')]),
@@ -38,7 +38,7 @@ class MethodSelector extends StatelessComponent {
   ]),
   form(method: FormMethod.post, action: '/api/gemini', [
     input(type: InputType.hidden, name: 'preference',
-      attributes: {'value': 'Recommend a specialty coffee for french press, full body and rich, medium to dark roast'}),
+      attributes: {'value': 'French press coffee recommendation, medium dark roast, full body'}),
     button(type: ButtonType.submit, classes: 'method-card', [
       h3([Component.text('French press')]),
       p([Component.text('Full body, rich')]),
@@ -49,7 +49,7 @@ class MethodSelector extends StatelessComponent {
         input(
           type: InputType.text,
           name: 'preference',
-          attributes: {'placeholder': 'Describe what you are looking for...'},
+          attributes: {'placeholder': 'Tell us a coffee to explore...'},
         ),
         button(
           type: ButtonType.submit,
@@ -159,7 +159,7 @@ class MethodSelector extends StatelessComponent {
         ]),
         css('button', [
           css('&').styles(
-            padding: Padding.symmetric(vertical: 0.8.rem, horizontal: 2.rem),
+            padding: Padding.symmetric(vertical: 0.8.rem, horizontal: 2.5.rem),
             border: Border.none,
             radius: BorderRadius.circular(8.px),
             cursor: Cursor.pointer,
@@ -171,6 +171,7 @@ class MethodSelector extends StatelessComponent {
             fontSize: 0.95.rem,
             fontWeight: FontWeight.w700,
             backgroundColor: scaWine,
+            raw: {'white-space': 'nowrap'},
           ),
           css('&:hover').styles(
             opacity: 0.9,

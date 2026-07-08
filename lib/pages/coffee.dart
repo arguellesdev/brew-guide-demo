@@ -43,9 +43,15 @@ class Coffee extends StatelessComponent {
     return '${r[0].toUpperCase()}${r.substring(1)} roast';
   }
 
-  @override
-  Component build(BuildContext context) {
-    return article(classes: 'coffee-detail', [
+@override
+Component build(BuildContext context) {
+  return div(classes: 'coffee-page', [
+    a(
+      href: '/',
+      classes: 'back-link',
+      [Component.text('☕ Brew Guide')],
+    ),
+    article(classes: 'coffee-detail', [
       div(classes: 'tags', [
         span(classes: 'tag method', [Component.text(_formatMethod(method))]),
         span(classes: 'tag roast', [Component.text(_formatRoast(roast))]),
@@ -66,11 +72,29 @@ class Coffee extends StatelessComponent {
           classes: 'flavor-notes',
           flavorNotes.map((note) => li([Component.text(note)])).toList(),
         ),
-    ]);
-  }
+    ]),
+  ]);
+}
 
   @css
   static List<StyleRule> get styles => [
+    css('.coffee-page', [
+  css('&').styles(
+    display: Display.flex,
+    flexDirection: FlexDirection.column,
+    alignItems: AlignItems.center,
+    padding: Padding.all(2.rem),
+  ),
+  css('.back-link').styles(
+    display: Display.block,
+    
+    fontFamily: const .list([FontFamily('Playfair Display'), FontFamilies.serif]),
+    fontSize: 1.2.rem,
+    fontWeight: FontWeight.w500,
+    color: colorTextDark,
+    textDecoration: TextDecoration(line: TextDecorationLine.none),
+  ),
+]),
     css('.coffee-detail', [
       css('&').styles(
         display: Display.flex,
