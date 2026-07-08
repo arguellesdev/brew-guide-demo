@@ -12,24 +12,40 @@ class MethodSelector extends StatelessComponent {
       h1([Component.text('Brew Guide')]),
       p(classes: 'subtitle', [Component.text('Select a brewing method')]),
       div(classes: 'method-grid', [
-        a(classes: 'method-card', href: '/coffee/pour_over', [
-          h3([Component.text('Pour over')]),
-          p([Component.text('Clean, floral, bright')]),
-        ]),
-        a(classes: 'method-card', href: '/coffee/espresso', [
-          h3([Component.text('Espresso')]),
-          p([Component.text('Bold, intense, crema')]),
-        ]),
-        a(classes: 'method-card', href: '/coffee/cold_brew', [
-          h3([Component.text('Cold brew')]),
-          p([Component.text('Smooth, low acid')]),
-        ]),
-        a(classes: 'method-card', href: '/coffee/french_press', [
-          h3([Component.text('French press')]),
-          p([Component.text('Full body, rich')]),
-        ]),
-      ]),
-      form(classes: 'gemini-input', method: FormMethod.post, action: '/api/gemini', [
+  form(method: FormMethod.post, action: '/api/gemini', [
+    input(type: InputType.hidden, name: 'preference',
+      attributes: {'value': 'Recommend a specialty coffee for pour over method, light roast, clean and floral notes'}),
+    button(type: ButtonType.submit, classes: 'method-card', [
+      h3([Component.text('Pour over')]),
+      p([Component.text('Clean, floral, bright')]),
+    ]),
+  ]),
+  form(method: FormMethod.post, action: '/api/gemini', [
+    input(type: InputType.hidden, name: 'preference',
+      attributes: {'value': 'Recommend a specialty coffee for espresso, dark roast, bold and intense with crema'}),
+    button(type: ButtonType.submit, classes: 'method-card', [
+      h3([Component.text('Espresso')]),
+      p([Component.text('Bold, intense, crema')]),
+    ]),
+  ]),
+  form(method: FormMethod.post, action: '/api/gemini', [
+    input(type: InputType.hidden, name: 'preference',
+      attributes: {'value': 'Recommend a specialty coffee for cold brew, smooth and low acid, refreshing'}),
+    button(type: ButtonType.submit, classes: 'method-card', [
+      h3([Component.text('Cold brew')]),
+      p([Component.text('Smooth, low acid')]),
+    ]),
+  ]),
+  form(method: FormMethod.post, action: '/api/gemini', [
+    input(type: InputType.hidden, name: 'preference',
+      attributes: {'value': 'Recommend a specialty coffee for french press, full body and rich, medium to dark roast'}),
+    button(type: ButtonType.submit, classes: 'method-card', [
+      h3([Component.text('French press')]),
+      p([Component.text('Full body, rich')]),
+    ]),
+  ]),
+]),
+      form(classes: 'gemini-input', method: FormMethod.post, action: '/api/gemini',  [
         input(
           type: InputType.text,
           name: 'preference',
@@ -48,11 +64,11 @@ class MethodSelector extends StatelessComponent {
     css('.method-selector', [
       css('&').styles(
         display: Display.flex,
-        maxWidth: 800.px,
+        maxWidth: 900.px,
         padding: Padding.symmetric(vertical: 4.rem, horizontal: 2.rem),
         margin: Margin.symmetric(vertical: Unit.zero, horizontal: Unit.auto),
         flexDirection: FlexDirection.column,
-        alignItems: AlignItems.center,
+        alignItems: AlignItems.stretch,
       ),
       css('h1').styles(
         margin: Margin.only(bottom: 0.5.rem),
@@ -119,12 +135,14 @@ class MethodSelector extends StatelessComponent {
       css('.gemini-input', [
         css('&').styles(
           display: Display.flex,
-          width: 100.percent,
-          maxWidth: 500.px,
+          // width: 100.percent,
+          // maxWidth: 100.percent,
           gap: Gap.all(0.5.rem),
+          raw: {'width': '100%', 'box-sizing': 'border-box'},
         ),
         css('input', [
           css('&').styles(
+            width: 100.percent,
             padding: Padding.symmetric(vertical: 0.8.rem, horizontal: 1.rem),
             border: Border.all(style: BorderStyle.solid, color: colorBorder, width: 1.px),
             radius: BorderRadius.circular(8.px),
@@ -141,7 +159,7 @@ class MethodSelector extends StatelessComponent {
         ]),
         css('button', [
           css('&').styles(
-            padding: Padding.symmetric(vertical: 0.8.rem, horizontal: 1.5.rem),
+            padding: Padding.symmetric(vertical: 0.8.rem, horizontal: 2.rem),
             border: Border.none,
             radius: BorderRadius.circular(8.px),
             cursor: Cursor.pointer,

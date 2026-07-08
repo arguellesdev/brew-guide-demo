@@ -1,7 +1,7 @@
 import 'package:jaspr/dom.dart';
 
 // SCA Specialty Coffee Association flavor palette.
-const scaCitrus     = Color('#F6B36F'); 
+const scaCitrus     = Color('#F6B36F');
 const scaStrawberry = Color('#FF5658');
 const scaChocolate  = Color('#74301E');
 const scaFloral     = Color('#C28DBE');
@@ -25,7 +25,7 @@ const primaryColor = scaBlueberry;
 @css
 List<StyleRule> get styles => [
   css.import(
-    'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap',
+    'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@400;500;700&display=swap',
   ),
   css('html, body').styles(
     width: 100.percent,
@@ -38,18 +38,28 @@ List<StyleRule> get styles => [
   css('h1').styles(
     margin: .unset,
     fontFamily: const .list([FontFamily('Playfair Display'), FontFamilies.serif]),
-    fontSize: 2.5.rem,
+    fontSize: 3.rem,
+    fontWeight: .w700,
     color: colorTextDark,
   ),
   css('h2').styles(
     fontFamily: const .list([FontFamily('Playfair Display'), FontFamilies.serif]),
-    fontSize: 1.5.rem,
+    fontSize: 2.rem,
+    fontWeight: .w500,
+    color: colorTextDark,
+    margin: .unset,
+  ),
+  css('h3').styles(
+    fontFamily: const .list([FontFamily('DM Sans'), FontFamilies.sansSerif]),
+    fontSize: 1.2.rem,
+    fontWeight: .w700,
     color: colorTextDark,
     margin: .unset,
   ),
   css('p').styles(
     color: colorTextMid,
-    fontSize: 0.9.rem,
+    fontSize: 1.rem,
+    fontWeight: .w400,
     lineHeight: 1.7.em,
   ),
 ];
