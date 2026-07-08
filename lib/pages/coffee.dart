@@ -83,11 +83,11 @@ Component build(BuildContext context) {
     display: Display.flex,
     flexDirection: FlexDirection.column,
     alignItems: AlignItems.center,
-    padding: Padding.all(2.rem),
+    padding: Padding.symmetric(vertical: 1.rem, horizontal: 2.rem),
   ),
   css('.back-link').styles(
     display: Display.block,
-    
+    margin: Margin.only(bottom: 1.5.rem),
     fontFamily: const .list([FontFamily('Playfair Display'), FontFamilies.serif]),
     fontSize: 1.2.rem,
     fontWeight: FontWeight.w500,
@@ -100,7 +100,7 @@ Component build(BuildContext context) {
         display: Display.flex,
         maxWidth: 600.px,
         padding: Padding.all(2.5.rem),
-        margin: Margin.symmetric(vertical: 4.rem, horizontal: Unit.auto),
+        margin: Margin.symmetric(vertical: 2.rem, horizontal: Unit.auto),
         border: Border.all(style: BorderStyle.solid, color: colorBorder, width: 1.px),
         radius: BorderRadius.circular(16.px),
         shadow: BoxShadow(
