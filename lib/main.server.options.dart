@@ -9,7 +9,6 @@ import 'package:flutter_conf_jaspr_demo/components/header.dart' as _header;
 import 'package:flutter_conf_jaspr_demo/components/method_selector.dart'
     as _method_selector;
 import 'package:flutter_conf_jaspr_demo/constants/theme.dart' as _theme;
-import 'package:flutter_conf_jaspr_demo/pages/about.dart' as _about;
 import 'package:flutter_conf_jaspr_demo/pages/coffee.dart' as _coffee;
 import 'package:flutter_conf_jaspr_demo/pages/home.dart' as _home;
 import 'package:flutter_conf_jaspr_demo/app.dart' as _app;
@@ -33,19 +32,17 @@ import 'package:flutter_conf_jaspr_demo/app.dart' as _app;
 ServerOptions get defaultServerOptions => ServerOptions(
   clientId: 'main.client.dart.js',
   clients: {
-    _about.About: ClientTarget<_about.About>('about'),
     _coffee.Coffee: ClientTarget<_coffee.Coffee>(
       'coffee',
       params: __coffeeCoffee,
     ),
-    _home.Home: ClientTarget<_home.Home>('home'),
+    _home.Home: ClientTarget<_home.Home>('home', params: __homeHome),
   },
   styles: () => [
     ..._theme.styles,
     ..._app.App.styles,
     ..._header.Header.styles,
     ..._method_selector.MethodSelector.styles,
-    ..._about.About.styles,
     ..._coffee.Coffee.styles,
   ],
 );
@@ -61,3 +58,4 @@ Map<String, Object?> __coffeeCoffee(_coffee.Coffee c) => {
   'grind': c.grind,
   'flavorNotes': c.flavorNotes,
 };
+Map<String, Object?> __homeHome(_home.Home c) => {'hasError': c.hasError};

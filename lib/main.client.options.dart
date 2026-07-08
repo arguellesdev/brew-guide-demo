@@ -6,7 +6,6 @@
 
 import 'package:jaspr/client.dart';
 
-import 'package:flutter_conf_jaspr_demo/pages/about.dart' deferred as _about;
 import 'package:flutter_conf_jaspr_demo/pages/coffee.dart' deferred as _coffee;
 import 'package:flutter_conf_jaspr_demo/pages/home.dart' deferred as _home;
 
@@ -28,7 +27,6 @@ import 'package:flutter_conf_jaspr_demo/pages/home.dart' deferred as _home;
 /// ```
 ClientOptions get defaultClientOptions => ClientOptions(
   clients: {
-    'about': ClientLoader((p) => _about.About(), loader: _about.loadLibrary),
     'coffee': ClientLoader(
       (p) => _coffee.Coffee(
         name: p['name'] as String,
@@ -43,6 +41,9 @@ ClientOptions get defaultClientOptions => ClientOptions(
       ),
       loader: _coffee.loadLibrary,
     ),
-    'home': ClientLoader((p) => _home.Home(), loader: _home.loadLibrary),
+    'home': ClientLoader(
+      (p) => _home.Home(hasError: p['hasError'] as bool),
+      loader: _home.loadLibrary,
+    ),
   },
 );
