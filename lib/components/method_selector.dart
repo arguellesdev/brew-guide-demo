@@ -86,15 +86,15 @@ window.addEventListener("pageshow", function(e) {
   @css
   static List<StyleRule> get styles => [
     css('.error-banner').styles(
-      padding: Padding.symmetric(vertical: 0.75.rem, horizontal: 1.rem),
-      margin: Margin.symmetric(vertical: Unit.zero, horizontal: Unit.auto),
-      radius: BorderRadius.circular(8.px),
-      color: scaWine,
-      fontSize: 0.95.rem,
-      textAlign: TextAlign.center,
-      backgroundColor: const Color('#6927291a'),
-      raw: {'width': 'fit-content', 'max-width': '400px'},
-    ),
+  padding: Padding.symmetric(vertical: 0.75.rem, horizontal: 1.5.rem),
+  margin: Margin.only(bottom: 1.5.rem),
+  radius: BorderRadius.circular(8.px),
+  color: scaWine,
+  fontSize: 0.95.rem,
+  textAlign: TextAlign.center,
+  backgroundColor: const Color('#6927291a'),
+  alignSelf: AlignSelf.center,
+),
     css('.loading-overlay', [
       css('&').styles(
         display: Display.none,
