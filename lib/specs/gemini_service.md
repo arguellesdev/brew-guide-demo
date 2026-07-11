@@ -35,7 +35,7 @@ flavorNotes (exactly 4 strings, 1-2 words each).
 JSON only. No explanation. No markdown.
 
 ## Constraints
-- maxOutputTokens: 2048
+- maxOutputTokens: 4096
 - responseMimeType: application/json
 - Strip markdown backticks from response if present
 - Return CoffeeBean record from parsed JSON

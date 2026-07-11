@@ -51,7 +51,7 @@ const systemPrompt =
       },
       'generationConfig': {
         'responseMimeType': 'application/json',
-        'maxOutputTokens': 2048,
+        'maxOutputTokens': 4096,
       },
     }),
   );

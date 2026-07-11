@@ -79,22 +79,22 @@ Component build(BuildContext context) {
   @css
   static List<StyleRule> get styles => [
     css('.coffee-page', [
-  css('&').styles(
-    display: Display.flex,
-    flexDirection: FlexDirection.column,
-    alignItems: AlignItems.center,
-    padding: Padding.symmetric(vertical: 1.rem, horizontal: 2.rem),
-  ),
-  css('.back-link').styles(
-    display: Display.block,
-    margin: Margin.only(bottom: 1.5.rem),
-    fontFamily: const .list([FontFamily('Playfair Display'), FontFamilies.serif]),
-    fontSize: 1.2.rem,
-    fontWeight: FontWeight.w500,
-    color: colorTextDark,
-    textDecoration: TextDecoration(line: TextDecorationLine.none),
-  ),
-]),
+      css('&').styles(
+        display: Display.flex,
+        padding: Padding.symmetric(vertical: 1.rem, horizontal: 2.rem),
+        flexDirection: FlexDirection.column,
+        alignItems: AlignItems.center,
+      ),
+      css('.back-link').styles(
+        display: Display.block,
+        margin: Margin.only(bottom: 1.5.rem),
+        color: colorTextDark,
+        fontFamily: const .list([FontFamily('Playfair Display'), FontFamilies.serif]),
+        fontSize: 1.2.rem,
+        fontWeight: FontWeight.w500,
+        textDecoration: TextDecoration(line: TextDecorationLine.none),
+      ),
+    ]),
     css('.coffee-detail', [
       css('&').styles(
         display: Display.flex,
@@ -165,8 +165,8 @@ Component build(BuildContext context) {
           justifyContent: JustifyContent.spaceAround,
           gridTemplate: const GridTemplate(
             rows: GridTracks([
-              GridTrack(TrackSize.auto),
-              GridTrack(TrackSize.auto),
+              GridTrack.repeat(TrackRepeat(1), [GridTrack(TrackSize.auto)]),
+              GridTrack.repeat(TrackRepeat(1), [GridTrack(TrackSize.auto)]),
             ]),
           ),
           gap: Gap.all(1.5.rem),

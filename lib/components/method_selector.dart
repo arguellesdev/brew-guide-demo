@@ -1,7 +1,6 @@
+import '../constants/theme.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
-
-import '../constants/theme.dart';
 
 class MethodSelector extends StatelessComponent {
   final bool hasError;
@@ -10,10 +9,10 @@ class MethodSelector extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     const onClickJs = '''
-var url = new URL(window.location.href);
-url.searchParams.delete("error");
-url.searchParams.delete("t");
-history.replaceState({}, "", url.pathname);
+var loc = window.location.pathname;
+history.replaceState({}, "", loc);
+var banner = document.querySelector(".error-banner");
+if(banner) banner.style.display = "none";
 document.getElementById("loading").style.display="flex";
 window.addEventListener("pageshow", function(e) {
   if(e.persisted) { document.getElementById("loading").style.display="none"; }
@@ -86,21 +85,21 @@ window.addEventListener("pageshow", function(e) {
   @css
   static List<StyleRule> get styles => [
     css('.error-banner').styles(
-  padding: Padding.symmetric(vertical: 0.75.rem, horizontal: 1.5.rem),
-  margin: Margin.only(bottom: 1.5.rem),
-  radius: BorderRadius.circular(8.px),
-  color: scaWine,
-  fontSize: 0.95.rem,
-  textAlign: TextAlign.center,
-  backgroundColor: const Color('#6927291a'),
-  alignSelf: AlignSelf.center,
-),
+      padding: Padding.symmetric(vertical: 0.75.rem, horizontal: 1.5.rem),
+      margin: Margin.only(bottom: 1.5.rem),
+      radius: BorderRadius.circular(8.px),
+      alignSelf: AlignSelf.center,
+      color: scaWine,
+      textAlign: TextAlign.center,
+      fontSize: 0.95.rem,
+      backgroundColor: const Color('#6927291a'),
+    ),
     css('.loading-overlay', [
       css('&').styles(
         display: Display.none,
         flexDirection: FlexDirection.column,
-        alignItems: AlignItems.center,
         justifyContent: JustifyContent.center,
+        alignItems: AlignItems.center,
         gap: Gap.all(1.5.rem),
         raw: {
           'position': 'fixed',
@@ -204,13 +203,13 @@ window.addEventListener("pageshow", function(e) {
         ),
         css('input', [
           css('&').styles(
-            flex: const Flex(grow: 1),
             minWidth: Unit.zero,
             padding: Padding.symmetric(vertical: 0.8.rem, horizontal: 1.rem),
             border: Border.all(style: BorderStyle.solid, color: colorBorder, width: 1.px),
             radius: BorderRadius.circular(8.px),
             outline: Outline(style: OutlineStyle.none),
             transition: Transition('border-color', duration: const Duration(milliseconds: 200), curve: Curve.ease),
+            flex: const Flex(grow: 1),
             color: colorTextDark,
             fontSize: 0.95.rem,
             backgroundColor: colorSurface,
