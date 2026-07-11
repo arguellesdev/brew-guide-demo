@@ -79,6 +79,12 @@ window.addEventListener("pageshow", function(e) {
         span(classes: 'cup', [Component.text('☕')]),
         p([Component.text('Brewing your recommendation...')]),
       ]),
+      a(
+  href: '/docs/brew-guide-run-guide.pdf',
+  classes: 'guide-link',
+  attributes: {'target': '_blank'},
+  [Component.text('📋 Run Guide')],
+),
     ]);
   }
 
@@ -238,6 +244,18 @@ window.addEventListener("pageshow", function(e) {
           css('&:active').styles(transform: Transform.scale(0.98)),
         ]),
       ]),
+      css('.guide-link').styles(
+        color: colorTextMuted,
+        fontSize: 0.8.rem,
+        textDecoration: TextDecoration(line: TextDecorationLine.none),
+        raw: {
+          'position': 'fixed',
+          'bottom': '1.5rem',
+          'right': '1.5rem',
+          'opacity': '0.4',
+          'z-index': '100',
+        },
+      ),
     ]),
   ];
 }
