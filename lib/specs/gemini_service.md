@@ -40,3 +40,11 @@ JSON only. No explanation. No markdown.
 - Strip markdown backticks from response if present
 - Return CoffeeBean record from parsed JSON
 - All fields have null-safe fallbacks with ?? ''
+
+## Error handling
+- Every failure is thrown as GeminiException with a GeminiFailure:
+  - busy: HTTP 429 or 5xx, or a network error
+  - timeout: no response within 30s
+  - badResponse: missing candidates/parts, or JSON that doesn't parse
+  - unavailable: any other non-200 (bad or missing API key, bad request)
+- busy and badResponse are retried once after 1s. timeout is not retried.

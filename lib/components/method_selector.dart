@@ -1,14 +1,30 @@
 import '../constants/theme.dart';
+import 'brew_facts.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
-class MethodSelector extends StatelessComponent {
-  final bool hasError;
-  const MethodSelector({super.key, this.hasError = false});
+/// Messages for each failure the server can send back (see GeminiFailure).
+const _errorMessages = {
+  'busy': 'Gemini is busy brewing for others. Give it a moment and try again.',
+  'timeout': 'That took longer than expected. Please try again.',
+  'badResponse': 'Gemini\'s answer came out a bit garbled. Please try again.',
+  'unavailable': 'Our AI barista is offline right now. Pick a brewing method above for a house recipe.',
+  'empty': 'Tell us what kind of coffee you\'d like to explore.',
+};
 
-  @override
-  Component build(BuildContext context) {
-    const onClickJs = '''
+const _methods = [
+  (id: 'pour_over', title: 'Pour over', subtitle: 'Clean, floral, bright',
+    preference: 'Pour over coffee recommendation, light roast, floral and clean'),
+  (id: 'espresso', title: 'Espresso', subtitle: 'Bold, intense, crema',
+    preference: 'Espresso coffee recommendation, dark roast, bold and intense with crema'),
+  (id: 'cold_brew', title: 'Cold brew', subtitle: 'Smooth, low acid',
+    preference: 'Cold brew coffee recommendation, smooth and low acid, refreshing'),
+  (id: 'french_press', title: 'French press', subtitle: 'Full body, rich',
+    preference: 'French press coffee recommendation, medium dark roast, full body'),
+];
+
+// Runs on form submit (after HTML validation passes), so the overlay never shows for a blocked submit.
+const _onSubmitJs = '''
 var loc = window.location.pathname;
 history.replaceState({}, "", loc);
 var banner = document.querySelector(".error-banner");
@@ -19,72 +35,71 @@ window.addEventListener("pageshow", function(e) {
 }, {once: true});
 ''';
 
+class MethodSelector extends StatelessComponent {
+  /// Why the last request failed, if it did. Keys into [_errorMessages].
+  final String? error;
+
+  /// The user's last free-text request, refilled so retrying is one click.
+  final String query;
+
+  const MethodSelector({super.key, this.error, this.query = ''});
+
+  @override
+  Component build(BuildContext context) {
+    final errorMessage = error == null
+        ? null
+        : _errorMessages[error] ?? 'Something went wrong. Please try again.';
+    final canRetry = error != null && query.isNotEmpty;
+
     return section(classes: 'method-selector', [
       h1([Component.text('Brew Guide')]),
       p(classes: 'subtitle', [Component.text('Select a brewing method')]),
-      if (hasError)
-        div(classes: 'error-banner', [
-          Component.text('Something went wrong. Please try again.'),
-        ]),
+      if (errorMessage != null)
+        div(classes: 'error-banner', [Component.text(errorMessage)]),
       div(classes: 'method-grid', [
-        form(method: FormMethod.post, action: '/api/gemini', [
-          input(type: InputType.hidden, name: 'preference',
-            attributes: {'value': 'Pour over coffee recommendation, light roast, floral and clean'}),
-          button(type: ButtonType.submit, classes: 'method-card',
-            attributes: {'onclick': onClickJs}, [
-            h3([Component.text('Pour over')]),
-            p([Component.text('Clean, floral, bright')]),
+        for (final m in _methods)
+          form(method: FormMethod.post, action: '/api/gemini', attributes: {'onsubmit': _onSubmitJs}, [
+            input(type: InputType.hidden, name: 'preference', attributes: {'value': m.preference}),
+            // Lets the server fall back to a house guide for this method if Gemini fails.
+            input(type: InputType.hidden, name: 'method', attributes: {'value': m.id}),
+            button(type: ButtonType.submit, classes: 'method-card', [
+              h3([Component.text(m.title)]),
+              p([Component.text(m.subtitle)]),
+            ]),
           ]),
-        ]),
-        form(method: FormMethod.post, action: '/api/gemini', [
-          input(type: InputType.hidden, name: 'preference',
-            attributes: {'value': 'Espresso coffee recommendation, dark roast, bold and intense with crema'}),
-          button(type: ButtonType.submit, classes: 'method-card',
-            attributes: {'onclick': onClickJs}, [
-            h3([Component.text('Espresso')]),
-            p([Component.text('Bold, intense, crema')]),
-          ]),
-        ]),
-        form(method: FormMethod.post, action: '/api/gemini', [
-          input(type: InputType.hidden, name: 'preference',
-            attributes: {'value': 'Cold brew coffee recommendation, smooth and low acid, refreshing'}),
-          button(type: ButtonType.submit, classes: 'method-card',
-            attributes: {'onclick': onClickJs}, [
-            h3([Component.text('Cold brew')]),
-            p([Component.text('Smooth, low acid')]),
-          ]),
-        ]),
-        form(method: FormMethod.post, action: '/api/gemini', [
-          input(type: InputType.hidden, name: 'preference',
-            attributes: {'value': 'French press coffee recommendation, medium dark roast, full body'}),
-          button(type: ButtonType.submit, classes: 'method-card',
-            attributes: {'onclick': onClickJs}, [
-            h3([Component.text('French press')]),
-            p([Component.text('Full body, rich')]),
-          ]),
-        ]),
       ]),
-      form(classes: 'gemini-input', method: FormMethod.post, action: '/api/gemini', [
+      form(
+          classes: 'gemini-input',
+          method: FormMethod.post,
+          action: '/api/gemini',
+          attributes: {'onsubmit': _onSubmitJs},
+          [
         input(
           type: InputType.text,
           name: 'preference',
-          attributes: {'placeholder': 'Tell us a coffee to explore...'},
+          attributes: {
+            'placeholder': 'Tell us a coffee to explore...',
+            'value': query,
+            // The browser blocks empty submits before they reach the server.
+            'required': '',
+          },
         ),
-        button(type: ButtonType.submit,
-          attributes: {'onclick': onClickJs},
-          [Component.text('Ask Gemini')],
+        button(
+          type: ButtonType.submit,
+          [Component.text(canRetry ? 'Try again' : 'Ask Gemini')],
         ),
       ]),
       div(classes: 'loading-overlay', id: 'loading', [
         span(classes: 'cup', [Component.text('☕')]),
-        p([Component.text('Brewing your recommendation...')]),
+        p(classes: 'loading-text', [Component.text('Brewing your recommendation...')]),
+        const BrewFacts(),
       ]),
       a(
-  href: '/docs/brew-guide-run-guide.pdf',
-  classes: 'guide-link',
-  attributes: {'target': '_blank'},
-  [Component.text('📋 Run Guide')],
-),
+        href: '/docs/brew-guide-run-guide.pdf',
+        classes: 'guide-link',
+        attributes: {'target': '_blank'},
+        [Component.text('📋 Run Guide')],
+      ),
     ]);
   }
 
@@ -121,7 +136,7 @@ window.addEventListener("pageshow", function(e) {
         fontSize: 4.rem,
         raw: {'animation': 'spin 1.5s linear infinite', 'display': 'block'},
       ),
-      css('p').styles(
+      css('.loading-text').styles(
         color: colorTextMuted,
         fontSize: 1.1.rem,
       ),

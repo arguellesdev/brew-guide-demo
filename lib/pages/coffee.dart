@@ -14,6 +14,9 @@ class Coffee extends StatelessComponent {
   final String grind;
   final List<String> flavorNotes;
 
+  /// True when Gemini couldn't answer and this is a built-in house guide.
+  final bool isFallback;
+
   const Coffee({
     super.key,
     required this.name,
@@ -25,6 +28,7 @@ class Coffee extends StatelessComponent {
     required this.waterTemp,
     required this.grind,
     required this.flavorNotes,
+    this.isFallback = false,
   });
 
   String _formatMethod(String m) {
@@ -51,6 +55,10 @@ Component build(BuildContext context) {
       [Component.text('☕ Brew Guide')],
     ),
     article(classes: 'coffee-detail', [
+      if (isFallback)
+        p(classes: 'fallback-note', [
+          Component.text("Gemini is busy right now, so here's our house recipe instead."),
+        ]),
       div(classes: 'tags', [
         span(classes: 'tag method', [Component.text(_formatMethod(method))]),
         span(classes: 'tag roast', [Component.text(_formatRoast(roast))]),
@@ -94,6 +102,15 @@ Component build(BuildContext context) {
         textDecoration: TextDecoration(line: TextDecorationLine.none),
       ),
     ]),
+    css('.fallback-note').styles(
+      padding: Padding.symmetric(vertical: 0.5.rem, horizontal: 1.rem),
+      margin: Margin.only(bottom: 1.5.rem),
+      radius: BorderRadius.circular(8.px),
+      color: colorTextMid,
+      textAlign: TextAlign.center,
+      fontSize: 0.85.rem,
+      backgroundColor: const Color('#3263591a'),
+    ),
     css('.coffee-detail', [
       css('&').styles(
         display: Display.flex,

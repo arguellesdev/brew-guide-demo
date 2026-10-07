@@ -6,6 +6,9 @@
 
 import 'package:jaspr/client.dart';
 
+import 'package:flutter_conf_jaspr_demo/components/brew_facts.dart'
+    deferred as _brew_facts;
+
 /// Default [ClientOptions] for use with your Jaspr project.
 ///
 /// Use this to initialize Jaspr **before** calling [runApp].
@@ -22,4 +25,11 @@ import 'package:jaspr/client.dart';
 ///   runApp(...);
 /// }
 /// ```
-ClientOptions get defaultClientOptions => ClientOptions();
+ClientOptions get defaultClientOptions => ClientOptions(
+  clients: {
+    'brew_facts': ClientLoader(
+      (p) => _brew_facts.BrewFacts(),
+      loader: _brew_facts.loadLibrary,
+    ),
+  },
+);

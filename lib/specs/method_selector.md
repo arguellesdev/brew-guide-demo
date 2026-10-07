@@ -39,3 +39,10 @@ Button text: scaCitrus #f6b36fff
 - CSS via @css static getter on the component class.
 - No JavaScript inline.
 - Component is StatelessComponent (no interactivity needed server-side).
+
+## Error handling
+- Input: `error` (a GeminiFailure name or 'empty') and `query` (the last free-text request), both from the URL.
+- Shows an .error-banner with a friendly message per error; unknown values get a generic message.
+- Refills the text input with `query`; the button reads "Try again" when retrying.
+- Each method card form posts a hidden `method` field so the server can fall back to a house guide.
+- The text input is `required`; the loading overlay starts on form `onsubmit` (after validation).

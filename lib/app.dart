@@ -18,7 +18,8 @@ class App extends StatelessComponent {
           path: '/',
           title: 'Home',
           builder: (context, state) => Home(
-            hasError: state.queryParams['error'] == '1',
+            error: state.queryParams['error'],
+            query: state.queryParams['q'] ?? '',
           ),
         ),
         Route(
@@ -34,6 +35,7 @@ class App extends StatelessComponent {
             waterTemp: state.queryParams['waterTemp'] ?? '',
             grind: state.queryParams['grind'] ?? '',
             flavorNotes: (state.queryParams['flavorNotes'] ?? '').split(','),
+            isFallback: state.queryParams['fallback'] == '1',
           ),
         ),
       ]),

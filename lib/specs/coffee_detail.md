@@ -43,3 +43,7 @@ record CoffeeBean {
 - Use <article> as root element, not <div>.
 - Flavor notes use <ul> and <li>, not divs.
 - CSS via @css static getter.
+
+## Fallback
+- When `isFallback` is true (URL `fallback=1`), show a `p.fallback-note` above the tags saying this is a house recipe because Gemini is busy.
+- House guides live in lib/data/house_guides.dart, one per method id.
