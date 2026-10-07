@@ -16,21 +16,18 @@ cd brew-guide
 dart pub get
 ```
 
-Create `start.sh` in the project root:
+Create `.env` in the project root:
 
 ```bash
-#!/bin/bash
-export GEMINI_API_KEY="your_key_here"
+GEMINI_API_KEY=your_key_here
+```
+
+```bash
 jaspr serve
+# → http://localhost:3015
 ```
 
-```bash
-chmod +x start.sh
-./start.sh
-# → http://localhost:8080
-```
-
-> Always use `./start.sh`, not `jaspr serve`. The API key is not persisted between terminal sessions.
+> The server loads `.env` on startup, so no `export` is needed.
 
 ---
 
@@ -95,10 +92,9 @@ flutter-conf-jaspr-demo/
 │       └── gemini_service.md       # SDD spec for GeminiService (shown on stage)
 ├── web/
 │   └── favicon.ico
-├── .env                            # GEMINI_API_KEY — gitignored, create manually
+├── .env                            # GEMINI_API_KEY — gitignored, loaded by the server
 ├── .gitignore
 ├── pubspec.yaml                    # jaspr: mode: server (critical — not static)
-├── start.sh                        # Exports API key, then runs jaspr serve — gitignored
 └── README.md
 ```
 
@@ -108,10 +104,9 @@ flutter-conf-jaspr-demo/
 
 | File | Required | Purpose |
 |---|---|---|
-| `start.sh` | Yes | Exports `GEMINI_API_KEY` and starts the server |
-| `.env` | Optional | Documents the key locally — not read automatically |
+| `.env` | Yes | Holds `GEMINI_API_KEY`; loaded by the server on startup |
 
-Both files are in `.gitignore`. Do not commit them.
+`.env` is in `.gitignore`. Do not commit it.
 
 `pubspec.yaml` must have `jaspr: mode: server`. The CLI scaffolds `mode: static` by default — this project will not work without that change.
 

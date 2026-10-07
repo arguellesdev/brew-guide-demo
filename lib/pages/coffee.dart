@@ -3,7 +3,6 @@ import 'package:jaspr/jaspr.dart';
 
 import '../constants/theme.dart';
 
-@client
 class Coffee extends StatelessComponent {
   final String name;
   final String origin;

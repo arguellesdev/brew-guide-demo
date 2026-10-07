@@ -30,6 +30,7 @@ const systemPrompt =
     'flavorNotes (exactly 4 strings, 1-2 words each). '
     'JSON only. No explanation. No markdown.';
 
+  final stopwatch = Stopwatch()..start();
   final response = await http.post(
     url,
     headers: {
@@ -56,11 +57,17 @@ const systemPrompt =
     }),
   );
 
+  print('[gemini] ${stopwatch.elapsedMilliseconds} ms | status ${response.statusCode}');
+
   if (response.statusCode != 200) {
     throw Exception('Failed to recommend coffee: ${response.body}');
   }
 
   final responseBody = jsonDecode(response.body) as Map<String, dynamic>;
+  final usage = responseBody['usageMetadata'] as Map<String, dynamic>?;
+  print('[gemini] ${stopwatch.elapsedMilliseconds} ms | '
+      'thinking tokens: ${usage?['thoughtsTokenCount'] ?? 0} | '
+      'answer tokens: ${usage?['candidatesTokenCount']}');
   final candidates = responseBody['candidates'] as List<dynamic>;
   if (candidates.isEmpty) {
     throw Exception('No recommendations found in the response.');

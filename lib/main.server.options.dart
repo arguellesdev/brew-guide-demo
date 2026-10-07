@@ -10,7 +10,6 @@ import 'package:flutter_conf_jaspr_demo/components/method_selector.dart'
     as _method_selector;
 import 'package:flutter_conf_jaspr_demo/constants/theme.dart' as _theme;
 import 'package:flutter_conf_jaspr_demo/pages/coffee.dart' as _coffee;
-import 'package:flutter_conf_jaspr_demo/pages/home.dart' as _home;
 import 'package:flutter_conf_jaspr_demo/app.dart' as _app;
 
 /// Default [ServerOptions] for use with your Jaspr project.
@@ -31,13 +30,6 @@ import 'package:flutter_conf_jaspr_demo/app.dart' as _app;
 /// ```
 ServerOptions get defaultServerOptions => ServerOptions(
   clientId: 'main.client.dart.js',
-  clients: {
-    _coffee.Coffee: ClientTarget<_coffee.Coffee>(
-      'coffee',
-      params: __coffeeCoffee,
-    ),
-    _home.Home: ClientTarget<_home.Home>('home', params: __homeHome),
-  },
   styles: () => [
     ..._theme.styles,
     ..._app.App.styles,
@@ -46,16 +38,3 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._coffee.Coffee.styles,
   ],
 );
-
-Map<String, Object?> __coffeeCoffee(_coffee.Coffee c) => {
-  'name': c.name,
-  'origin': c.origin,
-  'roast': c.roast,
-  'method': c.method,
-  'description': c.description,
-  'brewTime': c.brewTime,
-  'waterTemp': c.waterTemp,
-  'grind': c.grind,
-  'flavorNotes': c.flavorNotes,
-};
-Map<String, Object?> __homeHome(_home.Home c) => {'hasError': c.hasError};
