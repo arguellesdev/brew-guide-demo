@@ -75,6 +75,7 @@ flutter-conf-jaspr-demo/
 │   ├── main.server.options.dart    # Auto-generated — do not edit
 │   ├── main.client.options.dart    # Auto-generated — do not edit
 │   ├── components/
+│   │   ├── brew_facts.dart         # Rotating facts in the loading overlay (@client)
 │   │   ├── header.dart             # Brew Guide wordmark, links to /
 │   │   └── method_selector.dart    # Four cards + Gemini input + loading overlay
 │   ├── constants/
@@ -82,8 +83,8 @@ flutter-conf-jaspr-demo/
 │   ├── handlers/
 │   │   └── gemini_handler.dart     # POST /api/gemini — calls Gemini, redirects
 │   ├── pages/
-│   │   ├── home.dart               # Home page wrapper (@client)
-│   │   └── coffee.dart             # Coffee detail page (@client)
+│   │   ├── home.dart               # Home page wrapper (server-rendered)
+│   │   └── coffee.dart             # Coffee detail page (server-rendered)
 │   ├── services/
 │   │   └── gemini_service.dart     # Gemini API client, returns CoffeeBean record
 │   └── specs/
