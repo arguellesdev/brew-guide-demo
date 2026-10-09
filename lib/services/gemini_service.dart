@@ -49,6 +49,9 @@ enum GeminiFailure {
 
   /// The user's text isn't a coffee brewing method (e.g. "pizza"). Not worth retrying as-is.
   notABrewMethod,
+
+  /// Our own request cap (see rate_limiter.dart) was hit before calling Gemini. Retry later.
+  rateLimited,
 }
 
 class GeminiException implements Exception {

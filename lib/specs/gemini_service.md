@@ -48,6 +48,7 @@ JSON only. No explanation. No markdown.
   - badResponse: missing candidates/parts, or JSON that doesn't parse
   - unavailable: any other non-200 (bad or missing API key, bad request)
   - notABrewMethod: compareMethod only, Gemini says the text isn't a brewing method
+  - rateLimited: thrown by the handlers (not the service) when our own cap is hit; no Gemini call is made
 - busy and badResponse are retried once after 1s. timeout is not retried.
 
 ## compareMethod(methodName, apiKey) → MethodComparison

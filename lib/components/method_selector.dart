@@ -10,6 +10,7 @@ const _errorMessages = {
   'timeout': 'That took longer than expected. Please try again.',
   'badResponse': 'Gemini\'s answer came out a bit garbled. Please try again.',
   'unavailable': 'Our AI barista is offline right now. Pick a brewing method above for a house recipe.',
+  'rateLimited': 'That\'s a lot of coffee in a short time. Please wait a few minutes and try again.',
   'empty': 'Tell us what kind of coffee you\'d like to explore.',
 };
 

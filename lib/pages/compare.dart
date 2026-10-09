@@ -15,6 +15,7 @@ const _errorMessages = {
   'badResponse': 'Gemini\'s numbers came out a bit garbled. Please try again.',
   'unavailable': 'Our AI barista is offline right now. The three built-in methods above still work.',
   'notABrewMethod': 'That doesn\'t look like a brewing method. Try something like AeroPress or Moka pot.',
+  'rateLimited': 'That\'s a lot of coffee in a short time. Please wait a few minutes and try again.',
   'empty': 'Type a brewing method to compare, like AeroPress.',
 };
 

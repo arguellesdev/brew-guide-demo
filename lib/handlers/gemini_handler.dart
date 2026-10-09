@@ -3,9 +3,18 @@ import 'package:jaspr/server.dart';
 import '../data/house_guides.dart';
 import '../services/compare_signature.dart';
 import '../services/gemini_service.dart';
+import '../services/rate_limiter.dart';
 
 // Reads .env from the project root once, falling back to the shell environment.
 final _env = DotEnv(includePlatformEnvironment: true)..load();
+
+/// Throws [GeminiFailure.rateLimited] when the shared request cap is full, so the caller's usual failure path
+/// runs: preset cards fall back to the house recipe, free text goes back with the retry message.
+void _checkRateLimit() {
+  if (!geminiRateLimiter.tryAcquire()) {
+    throw GeminiException(GeminiFailure.rateLimited, 'request cap reached');
+  }
+}
 
 Future<Response> handleGeminiRequest(Request request) async {
   final params = Uri.splitQueryString(await request.readAsString());
@@ -18,6 +27,7 @@ Future<Response> handleGeminiRequest(Request request) async {
   }
 
   try {
+    _checkRateLimit();
     final apiKey = _env['GEMINI_API_KEY'] ?? '';
     final bean = await recommendCoffee(preference, apiKey);
     return _showGuide(bean);
@@ -99,6 +109,7 @@ Future<Response> handleCompareRequest(Request request) async {
 
   try {
     if (!hasCompareSigningKey) throw StateError('COMPARE_SIGNING_KEY is not set');
+    _checkRateLimit();
     final apiKey = _env['GEMINI_API_KEY'] ?? '';
     final comparison = await compareMethod(methodName, apiKey);
     final p = comparison.profile;
