@@ -1,6 +1,7 @@
 import 'package:dotenv/dotenv.dart';
 import 'package:jaspr/server.dart';
 import '../data/house_guides.dart';
+import '../services/compare_signature.dart';
 import '../services/gemini_service.dart';
 
 // Reads .env from the project root once, falling back to the shell environment.
@@ -68,6 +69,23 @@ Response _backHome(String error, String preference) {
 /// Longest method name we forward to Gemini. Method names are short; this caps what user text can carry.
 const _maxMethodLength = 40;
 
+/// Longest text we put in the /compare redirect, per field. The prompt already asks Gemini for short text;
+/// this keeps the URL well under the ~2 KB some proxies and log pipelines cut at if it ignores that.
+const _maxNameLength = 40;
+const _maxServingLength = 40;
+const _maxFilterLength = 40;
+const _maxDescriptionLength = 160;
+const _maxMythLength = 160;
+const _maxTruthLength = 300;
+
+/// Cuts [text] to [max] characters at a word boundary, adding an ellipsis. Never rejects: a retry costs a new call.
+String _clip(String text, int max) {
+  if (text.length <= max) return text;
+  final cut = text.substring(0, max - 1);
+  final lastSpace = cut.lastIndexOf(' ');
+  return '${(lastSpace > max ~/ 2 ? cut.substring(0, lastSpace) : cut).trimRight()}…';
+}
+
 Future<Response> handleCompareRequest(Request request) async {
   final params = Uri.splitQueryString(await request.readAsString());
   var methodName = (params['method'] ?? '').trim().replaceAll(RegExp(r'\s+'), ' ');
@@ -83,23 +101,22 @@ Future<Response> handleCompareRequest(Request request) async {
     final apiKey = _env['GEMINI_API_KEY'] ?? '';
     final comparison = await compareMethod(methodName, apiKey);
     final p = comparison.profile;
+    final fields = {
+      'name': _clip(p.name, _maxNameLength),
+      'serving': _clip(p.serving, _maxServingLength),
+      'filter': _clip(p.filter, _maxFilterLength),
+      'description': _clip(p.description, _maxDescriptionLength),
+      'tds': '${p.tds}',
+      'caffeine': '${p.caffeineMg}',
+      'yield': '${p.extractionYield}',
+      'body': '${p.body}',
+      'acidity': '${p.acidity}',
+      'myth': _clip(comparison.myth.claim, _maxMythLength),
+      'truth': _clip(comparison.myth.truth, _maxTruthLength),
+    };
+    // Signed after clipping: the page checks the exact strings in the URL.
     return Response.found(
-      Uri(
-        path: '/compare',
-        queryParameters: {
-          'name': p.name,
-          'serving': p.serving,
-          'filter': p.filter,
-          'description': p.description,
-          'tds': '${p.tds}',
-          'caffeine': '${p.caffeineMg}',
-          'yield': '${p.extractionYield}',
-          'body': '${p.body}',
-          'acidity': '${p.acidity}',
-          'myth': comparison.myth.claim,
-          'truth': comparison.myth.truth,
-        },
-      ),
+      Uri(path: '/compare', queryParameters: {...fields, 'sig': signCompareParams(fields)}),
     );
   } catch (e) {
     print('[gemini] compare failed: $e');

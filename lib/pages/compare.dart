@@ -72,8 +72,8 @@ class Compare extends StatelessComponent {
   @override
   Component build(BuildContext context) {
     final columns = [
-      for (final entry in brewProfiles.entries) (id: entry.key, profile: entry.value, isEstimate: false),
-      if (custom case final c?) (id: _customId, profile: c.profile, isEstimate: true),
+      for (final entry in brewProfiles.entries) (id: entry.key, profile: entry.value, isEstimate: false, myth: null),
+      if (custom case final c?) (id: _customId, profile: c.profile, isEstimate: true, myth: c.myth),
     ];
     final selectedId = custom != null ? _customId : columns.first.id;
     final errorMessage = error == null ? null : _errorMessages[error] ?? 'Something went wrong. Please try again.';
@@ -103,7 +103,7 @@ class Compare extends StatelessComponent {
             attributes: {'data-metric': metric.name},
             [
               _chart(metric, columns),
-              _myth(metricMyths[metric]!),
+              _myth(metric.myth),
             ],
           ),
         fieldset(classes: 'tabs method-picks', [
@@ -114,7 +114,7 @@ class Compare extends StatelessComponent {
               span([Component.text(c.profile.name)]),
             ]),
         ]),
-        for (final c in columns) _card(c.id, c.profile, c.isEstimate ? custom!.myth : null),
+        for (final c in columns) _card(c.id, c.profile, c.myth),
       ]),
       form(
         classes: 'compare-input',
@@ -150,7 +150,10 @@ class Compare extends StatelessComponent {
     ]);
   }
 
-  Component _chart(BrewMetric metric, List<({String id, BrewProfile profile, bool isEstimate})> columns) {
+  Component _chart(
+    BrewMetric metric,
+    List<({String id, BrewProfile profile, bool isEstimate, BrewMyth? myth})> columns,
+  ) {
     final isPair = metric == BrewMetric.bodyAcidity;
     // Body and acidity share a fixed 1-10 scale; the others scale to the tallest bar.
     final maxValue = isPair ? 10.0 : columns.map((c) => _value(metric, c.profile)).reduce(math.max);
@@ -250,11 +253,13 @@ class Compare extends StatelessComponent {
     );
   }
 
+  /// Value of a single-series metric. Never called for [BrewMetric.bodyAcidity]: that chart draws two bars
+  /// from `body` and `acidity` directly (fixed 1-10 scale).
   static double _value(BrewMetric metric, BrewProfile p) => switch (metric) {
     BrewMetric.tds => p.tds,
     BrewMetric.caffeine => p.caffeineMg.toDouble(),
     BrewMetric.extractionYield => p.extractionYield,
-    BrewMetric.bodyAcidity => p.body.toDouble(),
+    BrewMetric.bodyAcidity => throw StateError('bodyAcidity is a pair chart; read body and acidity directly'),
   };
 
   static String _format(BrewMetric metric, BrewProfile p) => switch (metric) {

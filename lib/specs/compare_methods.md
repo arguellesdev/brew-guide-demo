@@ -16,7 +16,7 @@ Home page "Compare methods & bust myths" link (`a.compare-link` in method_select
 - `BrewProfile` (gemini_service.dart): name, serving, filter, description, tds (%), caffeineMg,
   extractionYield (%), body (1-10), acidity (1-10).
 - `brewProfiles`: fixed values for espresso, pour_over, cold_brew (typical single serving).
-- `BrewMetric`: tds, caffeine, extractionYield, bodyAcidity (tab order). `metricMyths` maps each to a `BrewMyth`.
+- `BrewMetric`: tds, caffeine, extractionYield, bodyAcidity (tab order). Each value carries its own `BrewMyth` (`metric.myth`), so no metric can lack one.
 - The user's method is rebuilt from query params by `comparisonFromQuery` (no server state):
   name, serving, filter, description, tds, caffeine, yield, body, acidity, myth, truth.
   Missing or unparseable numbers → treated as no custom method. Numbers are clamped.
@@ -53,5 +53,6 @@ Home page "Compare methods & bust myths" link (`a.compare-link` in method_select
 
 ## Server: POST /api/compare
 - Trims, collapses whitespace, caps input at 40 chars before sending to Gemini.
+- Clips each Gemini text field (name 40, serving 40, filter 40, description 160, myth 160, truth 300) at a word boundary before the redirect, keeping the URL short. Clips, never rejects: rejecting would trigger a paid retry.
 - `compareMethod` (gemini_service.dart) → 302 /compare?<profile params>.
 - Failure → 302 /compare?error=<GeminiFailure.name>&q=<text>.
