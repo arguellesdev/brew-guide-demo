@@ -98,6 +98,7 @@ Future<Response> handleCompareRequest(Request request) async {
   }
 
   try {
+    if (!hasCompareSigningKey) throw StateError('COMPARE_SIGNING_KEY is not set');
     final apiKey = _env['GEMINI_API_KEY'] ?? '';
     final comparison = await compareMethod(methodName, apiKey);
     final p = comparison.profile;

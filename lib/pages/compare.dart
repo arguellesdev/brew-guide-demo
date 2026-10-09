@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
@@ -7,6 +5,7 @@ import '../components/error_banner.dart';
 import '../components/loading_overlay.dart';
 import '../constants/theme.dart';
 import '../data/brew_profiles.dart';
+import '../services/compare_signature.dart';
 import '../services/gemini_service.dart';
 
 /// Messages for each failure /api/compare can send back (see GeminiFailure).
@@ -26,8 +25,10 @@ const _customId = 'custom';
 const _allIds = ['espresso', 'pour_over', 'cold_brew', _customId];
 
 /// Rebuilds the user's comparison from /compare query params.
-/// Returns null (the empty state) when params are missing or a hand-edited URL doesn't parse.
+/// Returns null (the empty state) when params are missing, a hand-edited URL doesn't parse, or the
+/// signature from /api/compare doesn't match, so text typed into a URL never shows as an "AI estimate".
 MethodComparison? comparisonFromQuery(Map<String, String> q) {
+  if (!verifyCompareParams(q)) return null;
   final name = (q['name'] ?? '').trim();
   final tds = double.tryParse(q['tds'] ?? '');
   final caffeine = int.tryParse(q['caffeine'] ?? '');
@@ -155,8 +156,8 @@ class Compare extends StatelessComponent {
     List<({String id, BrewProfile profile, bool isEstimate, BrewMyth? myth})> columns,
   ) {
     final isPair = metric == BrewMetric.bodyAcidity;
-    // Body and acidity share a fixed 1-10 scale; the others scale to the tallest bar.
-    final maxValue = isPair ? 10.0 : columns.map((c) => _value(metric, c.profile)).reduce(math.max);
+    // Fixed scale per metric, so the built-in bars never move when the AI estimate changes.
+    final maxValue = metric.scaleMax;
 
     return figure(classes: 'chart', [
       ol(classes: 'bar-groups', [
@@ -200,7 +201,7 @@ class Compare extends StatelessComponent {
 
   Component _bar(String kind, double value, double maxValue, String text, String? seriesName) {
     // A floor keeps tiny values visible and clickable.
-    final percent = math.max(value / maxValue * 100, 2);
+    final percent = (value / maxValue * 100).clamp(2, 100);
     return span(classes: 'bar $kind', styles: Styles(height: percent.percent), [
       span(classes: 'value', [
         if (seriesName != null) span(classes: 'visually-hidden', [Component.text('$seriesName ')]),
@@ -368,19 +369,6 @@ class Compare extends StatelessComponent {
           ),
         ]),
       ]),
-      css('.metric-view, .method-card').styles(display: Display.none),
-      for (final metric in BrewMetric.values)
-        css('&:has(#metric-${metric.name}:checked) .metric-view[data-metric="${metric.name}"]').styles(
-          display: Display.block,
-        ),
-      for (final id in _allIds) ...[
-        css('&:has(#pick-$id:checked) .method-card[data-method="$id"]').styles(display: Display.block),
-        css('&:has(#pick-$id:checked) .bar-group[data-method="$id"] .bar').styles(opacity: 1),
-        css('&:has(#pick-$id:checked) .bar-group[data-method="$id"] .method-name').styles(
-          color: colorTextDark,
-          fontWeight: FontWeight.w700,
-        ),
-      ],
       css('.chart', [
         css('&').styles(margin: Margin.zero),
         css('.bar-groups').styles(
@@ -641,6 +629,22 @@ class Compare extends StatelessComponent {
         color: colorTextMuted,
         fontSize: 0.85.rem,
       ),
+    ]),
+    // Tabs and picks rely on :has(). Without it nothing is hidden, so every chart and card stays readable.
+    css.supports('selector(:has(*))', [
+      css('.compare-page .metric-view, .compare-page .method-card').styles(display: Display.none),
+      for (final metric in BrewMetric.values)
+        css('.compare-page:has(#metric-${metric.name}:checked) .metric-view[data-metric="${metric.name}"]').styles(
+          display: Display.block,
+        ),
+      for (final id in _allIds) ...[
+        css('.compare-page:has(#pick-$id:checked) .method-card[data-method="$id"]').styles(display: Display.block),
+        css('.compare-page:has(#pick-$id:checked) .bar-group[data-method="$id"] .bar').styles(opacity: 1),
+        css('.compare-page:has(#pick-$id:checked) .bar-group[data-method="$id"] .method-name').styles(
+          color: colorTextDark,
+          fontWeight: FontWeight.w700,
+        ),
+      ],
     ]),
     css('@keyframes bar-grow', [
       css('from').styles(raw: {'transform': 'scaleY(0)'}),

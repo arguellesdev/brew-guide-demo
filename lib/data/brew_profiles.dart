@@ -43,6 +43,7 @@ const Map<String, BrewProfile> brewProfiles = {
 enum BrewMetric {
   tds(
     'Strength (TDS %)',
+    scaleMax: 12,
     myth: (
       claim: 'Pour over is weak, watery coffee.',
       truth:
@@ -52,6 +53,7 @@ enum BrewMetric {
   ),
   caffeine(
     'Caffeine (mg)',
+    scaleMax: 300,
     myth: (
       claim: 'Espresso has the most caffeine.',
       truth:
@@ -61,6 +63,7 @@ enum BrewMetric {
   ),
   extractionYield(
     'Extraction yield (%)',
+    scaleMax: 25,
     myth: (
       claim: 'Stronger coffee means more gets extracted from the beans.',
       truth:
@@ -70,6 +73,7 @@ enum BrewMetric {
   ),
   bodyAcidity(
     'Body vs. acidity',
+    scaleMax: 10,
     myth: (
       claim: 'Cold brew has no acid.',
       truth:
@@ -78,8 +82,11 @@ enum BrewMetric {
     ),
   );
 
-  const BrewMetric(this.label, {required this.myth});
+  const BrewMetric(this.label, {required this.scaleMax, required this.myth});
 
   final String label;
+
+  /// Top of the chart's fixed axis. A bar is its value over this, so built-in bars stay put whatever the AI returns.
+  final double scaleMax;
   final BrewMyth myth;
 }

@@ -21,6 +21,9 @@ const signedCompareFields = [
   'truth',
 ];
 
+/// Whether a signing key is configured. Checked before calling Gemini so a missing key doesn't waste a paid call.
+bool get hasCompareSigningKey => (_env['COMPARE_SIGNING_KEY'] ?? '').isNotEmpty;
+
 /// HMAC-SHA256 (hex) over the raw query strings of [signedCompareFields], so only text our server
 /// produced can render under the "AI estimate" tag. Throws [StateError] when no signing key is set,
 /// so a misconfigured server fails instead of issuing forgeable links.

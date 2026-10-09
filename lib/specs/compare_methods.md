@@ -56,3 +56,9 @@ Home page "Compare methods & bust myths" link (`a.compare-link` in method_select
 - Clips each Gemini text field (name 40, serving 40, filter 40, description 160, myth 160, truth 300) at a word boundary before the redirect, keeping the URL short. Clips, never rejects: rejecting would trigger a paid retry.
 - `compareMethod` (gemini_service.dart) → 302 /compare?<profile params>.
 - Failure → 302 /compare?error=<GeminiFailure.name>&q=<text>.
+
+## Signed links, fixed scales, :has() fallback
+- `/api/compare` adds `sig`, an HMAC-SHA256 over the clipped params (`lib/services/compare_signature.dart`, key `COMPARE_SIGNING_KEY` in `.env`). `comparisonFromQuery` returns null (empty state) when `sig` is missing or doesn't match, so text typed into a URL never shows as an "AI estimate". With no key the handler fails with `unavailable` before calling Gemini.
+- Trade-off: a valid link can be replayed or shared, but only with content our server produced. Old unsigned links show the empty state.
+- Each `BrewMetric` has a fixed `scaleMax` (TDS 12, caffeine 300, yield 25, body/acidity 10). Bars are value / scaleMax, capped at 100%, so built-in bars never move when the AI estimate changes.
+- The hide/show rules live in `@supports selector(:has(*))`. Browsers without `:has()` show every chart and card stacked instead of nothing.
