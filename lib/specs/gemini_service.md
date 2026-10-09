@@ -47,4 +47,13 @@ JSON only. No explanation. No markdown.
   - timeout: no response within 30s
   - badResponse: missing candidates/parts, or JSON that doesn't parse
   - unavailable: any other non-200 (bad or missing API key, bad request)
+  - notABrewMethod: compareMethod only, Gemini says the text isn't a brewing method
 - busy and badResponse are retried once after 1s. timeout is not retried.
+
+## compareMethod(methodName, apiKey) → MethodComparison
+Used by /compare (see compare_methods.md). Same endpoint, timeout and retry as recommendCoffee
+(both go through `_generateJson`).
+- Returns ({BrewProfile profile, BrewMyth myth}).
+- The prompt treats the user text only as a method name and returns {"notABrewMethod": true} otherwise.
+- Numbers are clamped: tds 0.1-20, caffeineMg 0-600, extractionYield 1-35, body/acidity 1-10.
+- Missing name or non-numeric metrics → badResponse.

@@ -33,11 +33,16 @@ class Coffee extends StatelessComponent {
 
   String _formatMethod(String m) {
     switch (m.toLowerCase()) {
-      case 'pour_over': return 'Pour over';
-      case 'espresso': return 'Espresso';
-      case 'cold_brew': return 'Cold brew';
-      case 'french_press': return 'French press';
-      default: return m.replaceAll('_', ' ');
+      case 'pour_over':
+        return 'Pour over';
+      case 'espresso':
+        return 'Espresso';
+      case 'cold_brew':
+        return 'Cold brew';
+      case 'french_press':
+        return 'French press';
+      default:
+        return m.replaceAll('_', ' ');
     }
   }
 
@@ -46,42 +51,42 @@ class Coffee extends StatelessComponent {
     return '${r[0].toUpperCase()}${r.substring(1)} roast';
   }
 
-@override
-Component build(BuildContext context) {
-  return div(classes: 'coffee-page', [
-    a(
-      href: '/',
-      classes: 'back-link',
-      [Component.text('☕ Brew Guide')],
-    ),
-    article(classes: 'coffee-detail', [
-      if (isFallback)
-        p(classes: 'fallback-note', [
-          Component.text("Gemini is busy right now, so here's our house recipe instead."),
+  @override
+  Component build(BuildContext context) {
+    return div(classes: 'coffee-page', [
+      a(
+        href: '/',
+        classes: 'back-link',
+        [Component.text('☕ Brew Guide')],
+      ),
+      article(classes: 'coffee-detail', [
+        if (isFallback)
+          p(classes: 'fallback-note', [
+            Component.text("Gemini is busy right now, so here's our house recipe instead."),
+          ]),
+        div(classes: 'tags', [
+          span(classes: 'tag method', [Component.text(_formatMethod(method))]),
+          span(classes: 'tag roast', [Component.text(_formatRoast(roast))]),
+          span(classes: 'tag origin', [Component.text(origin)]),
         ]),
-      div(classes: 'tags', [
-        span(classes: 'tag method', [Component.text(_formatMethod(method))]),
-        span(classes: 'tag roast', [Component.text(_formatRoast(roast))]),
-        span(classes: 'tag origin', [Component.text(origin)]),
+        h1([Component.text(name)]),
+        p(classes: 'description', [Component.text(description)]),
+        dl(classes: 'metrics', [
+          dt([Component.text('Grind')]),
+          dd([Component.text(grind)]),
+          dt([Component.text('Water')]),
+          dd([Component.text(waterTemp)]),
+          dt([Component.text('Time')]),
+          dd([Component.text(brewTime)]),
+        ]),
+        if (flavorNotes.isNotEmpty)
+          ul(
+            classes: 'flavor-notes',
+            flavorNotes.map((note) => li([Component.text(note)])).toList(),
+          ),
       ]),
-      h1([Component.text(name)]),
-      p(classes: 'description', [Component.text(description)]),
-      dl(classes: 'metrics', [
-        dt([Component.text('Grind')]),
-        dd([Component.text(grind)]),
-        dt([Component.text('Water')]),
-        dd([Component.text(waterTemp)]),
-        dt([Component.text('Time')]),
-        dd([Component.text(brewTime)]),
-      ]),
-      if (flavorNotes.isNotEmpty)
-        ul(
-          classes: 'flavor-notes',
-          flavorNotes.map((note) => li([Component.text(note)])).toList(),
-        ),
-    ]),
-  ]);
-}
+    ]);
+  }
 
   @css
   static List<StyleRule> get styles => [

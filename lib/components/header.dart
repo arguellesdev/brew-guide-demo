@@ -19,13 +19,15 @@ class Header extends StatelessComponent {
     ]);
   }
 
-@css
+  @css
   static List<StyleRule> get styles => [
     css('header', [
       css('&').styles(
         display: .flex,
         padding: .symmetric(vertical: 1.em, horizontal: 2.em),
-        border: .only(bottom: .solid(color: colorBorder, width: 1.px)),
+        border: .only(
+          bottom: .solid(color: colorBorder, width: 1.px),
+        ),
         justifyContent: .start,
         backgroundColor: colorSurface,
       ),
@@ -45,4 +47,3 @@ class Header extends StatelessComponent {
     ]),
   ];
 }
-

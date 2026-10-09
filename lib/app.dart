@@ -4,6 +4,7 @@ import 'package:jaspr_router/jaspr_router.dart';
 
 import 'components/header.dart';
 import 'pages/coffee.dart';
+import 'pages/compare.dart';
 import 'pages/home.dart';
 
 class App extends StatelessComponent {
@@ -13,32 +14,43 @@ class App extends StatelessComponent {
   Component build(BuildContext context) {
     return div(classes: 'main', [
       const Header(),
-      Router(routes: [
-        Route(
-          path: '/',
-          title: 'Home',
-          builder: (context, state) => Home(
-            error: state.queryParams['error'],
-            query: state.queryParams['q'] ?? '',
+      Router(
+        routes: [
+          Route(
+            path: '/',
+            title: 'Home',
+            builder: (context, state) => Home(
+              error: state.queryParams['error'],
+              query: state.queryParams['q'] ?? '',
+            ),
           ),
-        ),
-        Route(
-          path: '/coffee',
-          title: 'Brew Guide',
-          builder: (context, state) => Coffee(
-            name: state.queryParams['name'] ?? '',
-            origin: state.queryParams['origin'] ?? '',
-            roast: state.queryParams['roast'] ?? '',
-            method: state.queryParams['method'] ?? '',
-            description: state.queryParams['description'] ?? '',
-            brewTime: state.queryParams['brewTime'] ?? '',
-            waterTemp: state.queryParams['waterTemp'] ?? '',
-            grind: state.queryParams['grind'] ?? '',
-            flavorNotes: (state.queryParams['flavorNotes'] ?? '').split(','),
-            isFallback: state.queryParams['fallback'] == '1',
+          Route(
+            path: '/coffee',
+            title: 'Brew Guide',
+            builder: (context, state) => Coffee(
+              name: state.queryParams['name'] ?? '',
+              origin: state.queryParams['origin'] ?? '',
+              roast: state.queryParams['roast'] ?? '',
+              method: state.queryParams['method'] ?? '',
+              description: state.queryParams['description'] ?? '',
+              brewTime: state.queryParams['brewTime'] ?? '',
+              waterTemp: state.queryParams['waterTemp'] ?? '',
+              grind: state.queryParams['grind'] ?? '',
+              flavorNotes: (state.queryParams['flavorNotes'] ?? '').split(','),
+              isFallback: state.queryParams['fallback'] == '1',
+            ),
           ),
-        ),
-      ]),
+          Route(
+            path: '/compare',
+            title: 'Compare methods',
+            builder: (context, state) => Compare(
+              custom: comparisonFromQuery(state.queryParams),
+              error: state.queryParams['error'],
+              query: state.queryParams['q'] ?? '',
+            ),
+          ),
+        ],
+      ),
     ]);
   }
 
@@ -47,15 +59,14 @@ class App extends StatelessComponent {
     css('.main', [
       css('&').styles(
         display: .flex,
-        height: 100.vh,
+        // min-height, not height: pages taller than the window scroll instead of wrapping into a second column.
+        minHeight: 100.vh,
         flexDirection: .column,
-        flexWrap: .wrap,
       ),
       css('section').styles(
         display: .flex,
         flexDirection: .column,
         justifyContent: .center,
-        alignItems: .center,
         flex: Flex(grow: 1),
       ),
     ]),

@@ -10,17 +10,21 @@ void main() {
 
   ServerApp.addMiddleware((handler) {
     return (request) async {
-      if (request.method == 'POST' &&
-          request.url.path == 'api/gemini') {
+      if (request.method == 'POST' && request.url.path == 'api/gemini') {
         return handleGeminiRequest(request);
+      }
+      if (request.method == 'POST' && request.url.path == 'api/compare') {
+        return handleCompareRequest(request);
       }
       return handler(request);
     };
   });
 
-  runApp(Document(
-    title: 'Brew Guide',
-    styles: [],
-    body: App(),
-  ));
+  runApp(
+    Document(
+      title: 'Brew Guide',
+      styles: [],
+      body: App(),
+    ),
+  );
 }

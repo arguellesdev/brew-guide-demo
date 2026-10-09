@@ -1,23 +1,27 @@
 import 'package:jaspr/dom.dart';
 
 // SCA Specialty Coffee Association flavor palette.
-const scaCitrus     = Color('#F6B36F');
+const scaCitrus = Color('#F6B36F');
 const scaStrawberry = Color('#FF5658');
-const scaChocolate  = Color('#74301E');
-const scaFloral     = Color('#C28DBE');
-const scaBlueberry  = Color('#2659B1');
-const scaFerment    = Color('#CDAF29');
-const scaWine       = Color('#692729');
-const scaHerb       = Color('#326359');
-const scaBay        = Color('#143D37');
+const scaChocolate = Color('#74301E');
+const scaFloral = Color('#C28DBE');
+const scaBlueberry = Color('#2659B1');
+const scaFerment = Color('#CDAF29');
+const scaWine = Color('#692729');
+const scaHerb = Color('#326359');
+const scaBay = Color('#143D37');
 
 // Neutral surface palette.
 const colorBackground = Color('#F5EFE4');
-const colorSurface    = Color('#FFFDF8');
-const colorBorder     = Color('#E2D5BE');
-const colorTextDark   = Color('#1C1208');
-const colorTextMid    = Color('#5C4A2A');
-const colorTextMuted  = Color('#8C7355');
+const colorSurface = Color('#FFFDF8');
+const colorBorder = Color('#E2D5BE');
+const colorTextDark = Color('#1C1208');
+const colorTextMid = Color('#5C4A2A');
+const colorTextMuted = Color('#8C7355');
+
+// 10% alpha tints for banners and badges.
+const scaWineTint = Color('#6927291a');
+const scaHerbTint = Color('#3263591a');
 
 // Used by counter.dart. Remove when Counter is deleted.
 const primaryColor = scaBlueberry;

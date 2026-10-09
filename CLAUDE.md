@@ -32,11 +32,12 @@ The only `@client` component is `BrewFacts` (rotating facts inside the loading o
 - **Tokens:** `lib/constants/theme.dart`
   - SCA palette: `scaCitrus`, `scaStrawberry`, `scaChocolate`, `scaFloral`, `scaBlueberry`, `scaFerment`, `scaWine`, `scaHerb`, `scaBay`
   - Surfaces/text: `colorBackground`, `colorSurface`, `colorBorder`, `colorTextDark`, `colorTextMid`, `colorTextMuted`
+  - 10% tints: `scaWineTint`, `scaHerbTint`
   - Fonts: Playfair Display (headings), DM Sans (body), loaded through a Google Fonts `css.import`
   - Global element styles (`html, body`, `h1`–`h3`, `p`) also live here
-- **Specs:** `lib/specs/` contains `method_selector.md`, `coffee_detail.md`, `gemini_service.md` (see "Known drift")
-- **Errors:** `GeminiFailure` in `lib/services/gemini_service.dart` (`busy`, `timeout`, `badResponse`, `unavailable`), shown to users through `_errorMessages` in `lib/components/method_selector.dart`, which also has the UI-only `empty` key
-- **Routes:** `/` (home, params `error`, `q`) and `/coffee` in `lib/app.dart`; `POST /api/gemini` in `lib/handlers/gemini_handler.dart`
+- **Specs:** `lib/specs/` contains `method_selector.md`, `coffee_detail.md`, `gemini_service.md`, `compare_methods.md` (see "Known drift")
+- **Errors:** `GeminiFailure` in `lib/services/gemini_service.dart` (`busy`, `timeout`, `badResponse`, `unavailable`, `notABrewMethod`), shown to users through `_errorMessages` in `lib/components/method_selector.dart` and `lib/pages/compare.dart`, which also have the UI-only `empty` key. Shared UI: `ErrorBanner`, `LoadingOverlay` + `loadingOnSubmitJs` in `lib/components/`
+- **Routes:** `/` (home, params `error`, `q`), `/coffee` and `/compare` in `lib/app.dart`; `POST /api/gemini` and `POST /api/compare` in `lib/handlers/gemini_handler.dart`
 - **Static assets:** `web/` (`images/logo.svg`, `docs/*.pdf` linked from the home page's "Run Guide")
 
 ## Jaspr gotchas
@@ -71,4 +72,4 @@ Small fixes and questions skip this format.
 
 ## Known cleanup
 - `primaryColor` in `theme.dart` is a leftover from the template counter. Remove it once nothing uses it.
-- Some styles break Rule 1 with raw colors. Alpha tints like `#6927291a` and `#3263591a` appear in `method_selector.dart` and `coffee.dart`, and the loading overlay hardcodes `#F5EFE4` (which is `colorBackground`). Move these into tokens when you next touch those files.
+- Some styles break Rule 1 with raw colors. `coffee.dart` still uses the alpha tint `#3263591a` (now the `scaHerbTint` token), and `method_selector.dart` has a hover shadow `#2b6a5d1a`. Move these into tokens when you next touch those files.

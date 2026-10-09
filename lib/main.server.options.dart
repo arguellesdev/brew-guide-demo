@@ -7,11 +7,16 @@
 import 'package:jaspr/server.dart';
 import 'package:flutter_conf_jaspr_demo/components/brew_facts.dart'
     as _brew_facts;
+import 'package:flutter_conf_jaspr_demo/components/error_banner.dart'
+    as _error_banner;
 import 'package:flutter_conf_jaspr_demo/components/header.dart' as _header;
+import 'package:flutter_conf_jaspr_demo/components/loading_overlay.dart'
+    as _loading_overlay;
 import 'package:flutter_conf_jaspr_demo/components/method_selector.dart'
     as _method_selector;
 import 'package:flutter_conf_jaspr_demo/constants/theme.dart' as _theme;
 import 'package:flutter_conf_jaspr_demo/pages/coffee.dart' as _coffee;
+import 'package:flutter_conf_jaspr_demo/pages/compare.dart' as _compare;
 import 'package:flutter_conf_jaspr_demo/app.dart' as _app;
 
 /// Default [ServerOptions] for use with your Jaspr project.
@@ -39,8 +44,11 @@ ServerOptions get defaultServerOptions => ServerOptions(
     ..._theme.styles,
     ..._app.App.styles,
     ..._brew_facts.BrewFacts.styles,
+    ..._error_banner.ErrorBanner.styles,
     ..._header.Header.styles,
+    ..._loading_overlay.LoadingOverlay.styles,
     ..._method_selector.MethodSelector.styles,
     ..._coffee.Coffee.styles,
+    ..._compare.Compare.styles,
   ],
 );

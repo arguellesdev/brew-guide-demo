@@ -1,5 +1,6 @@
 import '../constants/theme.dart';
-import 'brew_facts.dart';
+import 'error_banner.dart';
+import 'loading_overlay.dart';
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
@@ -13,27 +14,31 @@ const _errorMessages = {
 };
 
 const _methods = [
-  (id: 'pour_over', title: 'Pour over', subtitle: 'Clean, floral, bright',
-    preference: 'Pour over coffee recommendation, light roast, floral and clean'),
-  (id: 'espresso', title: 'Espresso', subtitle: 'Bold, intense, crema',
-    preference: 'Espresso coffee recommendation, dark roast, bold and intense with crema'),
-  (id: 'cold_brew', title: 'Cold brew', subtitle: 'Smooth, low acid',
-    preference: 'Cold brew coffee recommendation, smooth and low acid, refreshing'),
-  (id: 'french_press', title: 'French press', subtitle: 'Full body, rich',
-    preference: 'French press coffee recommendation, medium dark roast, full body'),
+  (
+    id: 'pour_over',
+    title: 'Pour over',
+    subtitle: 'Clean, floral, bright',
+    preference: 'Pour over coffee recommendation, light roast, floral and clean',
+  ),
+  (
+    id: 'espresso',
+    title: 'Espresso',
+    subtitle: 'Bold, intense, crema',
+    preference: 'Espresso coffee recommendation, dark roast, bold and intense with crema',
+  ),
+  (
+    id: 'cold_brew',
+    title: 'Cold brew',
+    subtitle: 'Smooth, low acid',
+    preference: 'Cold brew coffee recommendation, smooth and low acid, refreshing',
+  ),
+  (
+    id: 'french_press',
+    title: 'French press',
+    subtitle: 'Full body, rich',
+    preference: 'French press coffee recommendation, medium dark roast, full body',
+  ),
 ];
-
-// Runs on form submit (after HTML validation passes), so the overlay never shows for a blocked submit.
-const _onSubmitJs = '''
-var loc = window.location.pathname;
-history.replaceState({}, "", loc);
-var banner = document.querySelector(".error-banner");
-if(banner) banner.style.display = "none";
-document.getElementById("loading").style.display="flex";
-window.addEventListener("pageshow", function(e) {
-  if(e.persisted) { document.getElementById("loading").style.display="none"; }
-}, {once: true});
-''';
 
 class MethodSelector extends StatelessComponent {
   /// Why the last request failed, if it did. Keys into [_errorMessages].
@@ -46,54 +51,54 @@ class MethodSelector extends StatelessComponent {
 
   @override
   Component build(BuildContext context) {
-    final errorMessage = error == null
-        ? null
-        : _errorMessages[error] ?? 'Something went wrong. Please try again.';
+    final errorMessage = error == null ? null : _errorMessages[error] ?? 'Something went wrong. Please try again.';
     final canRetry = error != null && query.isNotEmpty;
 
     return section(classes: 'method-selector', [
       h1([Component.text('Brew Guide')]),
       p(classes: 'subtitle', [Component.text('Select a brewing method')]),
-      if (errorMessage != null)
-        div(classes: 'error-banner', [Component.text(errorMessage)]),
+      if (errorMessage != null) ErrorBanner(message: errorMessage),
       div(classes: 'method-grid', [
         for (final m in _methods)
-          form(method: FormMethod.post, action: '/api/gemini', attributes: {'onsubmit': _onSubmitJs}, [
-            input(type: InputType.hidden, name: 'preference', attributes: {'value': m.preference}),
-            // Lets the server fall back to a house guide for this method if Gemini fails.
-            input(type: InputType.hidden, name: 'method', attributes: {'value': m.id}),
-            button(type: ButtonType.submit, classes: 'method-card', [
-              h3([Component.text(m.title)]),
-              p([Component.text(m.subtitle)]),
-            ]),
-          ]),
+          form(
+            method: FormMethod.post,
+            action: '/api/gemini',
+            attributes: {'onsubmit': loadingOnSubmitJs},
+            [
+              input(type: InputType.hidden, name: 'preference', attributes: {'value': m.preference}),
+              // Lets the server fall back to a house guide for this method if Gemini fails.
+              input(type: InputType.hidden, name: 'method', attributes: {'value': m.id}),
+              button(type: ButtonType.submit, classes: 'method-card', [
+                h3([Component.text(m.title)]),
+                p([Component.text(m.subtitle)]),
+              ]),
+            ],
+          ),
       ]),
       form(
-          classes: 'gemini-input',
-          method: FormMethod.post,
-          action: '/api/gemini',
-          attributes: {'onsubmit': _onSubmitJs},
-          [
-        input(
-          type: InputType.text,
-          name: 'preference',
-          attributes: {
-            'placeholder': 'Tell us a coffee to explore...',
-            'value': query,
-            // The browser blocks empty submits before they reach the server.
-            'required': '',
-          },
-        ),
-        button(
-          type: ButtonType.submit,
-          [Component.text(canRetry ? 'Try again' : 'Ask Gemini')],
-        ),
-      ]),
-      div(classes: 'loading-overlay', id: 'loading', [
-        span(classes: 'cup', [Component.text('☕')]),
-        p(classes: 'loading-text', [Component.text('Brewing your recommendation...')]),
-        const BrewFacts(),
-      ]),
+        classes: 'gemini-input',
+        method: FormMethod.post,
+        action: '/api/gemini',
+        attributes: {'onsubmit': loadingOnSubmitJs},
+        [
+          input(
+            type: InputType.text,
+            name: 'preference',
+            attributes: {
+              'placeholder': 'Tell us a coffee to explore...',
+              'value': query,
+              // The browser blocks empty submits before they reach the server.
+              'required': '',
+            },
+          ),
+          button(
+            type: ButtonType.submit,
+            [Component.text(canRetry ? 'Try again' : 'Ask Gemini')],
+          ),
+        ],
+      ),
+      a(href: '/compare', classes: 'compare-link', [Component.text('Compare methods & bust myths')]),
+      const LoadingOverlay(message: 'Brewing your recommendation...'),
       a(
         href: '/docs/brew-guide-run-guide.pdf',
         classes: 'guide-link',
@@ -105,46 +110,6 @@ class MethodSelector extends StatelessComponent {
 
   @css
   static List<StyleRule> get styles => [
-    css('.error-banner').styles(
-      padding: Padding.symmetric(vertical: 0.75.rem, horizontal: 1.5.rem),
-      margin: Margin.only(bottom: 1.5.rem),
-      radius: BorderRadius.circular(8.px),
-      alignSelf: AlignSelf.center,
-      color: scaWine,
-      textAlign: TextAlign.center,
-      fontSize: 0.95.rem,
-      backgroundColor: const Color('#6927291a'),
-    ),
-    css('.loading-overlay', [
-      css('&').styles(
-        display: Display.none,
-        flexDirection: FlexDirection.column,
-        justifyContent: JustifyContent.center,
-        alignItems: AlignItems.center,
-        gap: Gap.all(1.5.rem),
-        raw: {
-          'position': 'fixed',
-          'top': '0',
-          'left': '0',
-          'width': '100vw',
-          'height': '100vh',
-          'z-index': '999',
-          'background-color': '#F5EFE4',
-        },
-      ),
-      css('.cup').styles(
-        fontSize: 4.rem,
-        raw: {'animation': 'spin 1.5s linear infinite', 'display': 'block'},
-      ),
-      css('.loading-text').styles(
-        color: colorTextMuted,
-        fontSize: 1.1.rem,
-      ),
-    ]),
-    css('@keyframes spin', [
-      css('from').styles(raw: {'transform': 'rotate(0deg)'}),
-      css('to').styles(raw: {'transform': 'rotate(360deg)'}),
-    ]),
     css('.method-selector', [
       css('&').styles(
         display: Display.flex,
@@ -180,7 +145,11 @@ class MethodSelector extends StatelessComponent {
         css('.method-card', [
           css('&').styles(
             display: Display.flex,
+            // Fill the grid cell; buttons otherwise shrink to their text.
+            width: 100.percent,
+            height: 100.percent,
             padding: Padding.all(1.5.rem),
+            boxSizing: BoxSizing.borderBox,
             border: Border.all(style: BorderStyle.solid, color: colorBorder, width: 2.px),
             radius: BorderRadius.circular(12.px),
             cursor: Cursor.pointer,
@@ -258,6 +227,27 @@ class MethodSelector extends StatelessComponent {
           css('&:hover').styles(opacity: 0.9),
           css('&:active').styles(transform: Transform.scale(0.98)),
         ]),
+      ]),
+      css('.compare-link', [
+        css('&').styles(
+          display: Display.flex,
+          minHeight: 3.rem,
+          padding: Padding.symmetric(horizontal: 1.5.rem),
+          margin: Margin.only(top: 1.5.rem),
+          border: Border.all(style: BorderStyle.solid, color: scaHerb, width: 2.px),
+          radius: BorderRadius.circular(8.px),
+          transition: Transition('background-color', duration: const Duration(milliseconds: 200), curve: Curve.ease),
+          justifyContent: JustifyContent.center,
+          alignItems: AlignItems.center,
+          color: scaHerb,
+          fontSize: 0.95.rem,
+          fontWeight: FontWeight.w700,
+          textDecoration: TextDecoration(line: TextDecorationLine.none),
+        ),
+        css('&:hover').styles(backgroundColor: scaHerbTint),
+        css('&:focus-visible').styles(
+          outline: Outline(style: OutlineStyle.solid, color: scaHerb, width: OutlineWidth(2.px), offset: 2.px),
+        ),
       ]),
       css('.guide-link').styles(
         color: colorTextMuted,
